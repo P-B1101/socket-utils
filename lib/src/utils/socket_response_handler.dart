@@ -1,6 +1,4 @@
-import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import '../request/tcp_command.dart';
@@ -11,7 +9,6 @@ final class SocketResponseHandler {
   final void Function(TCPRequest) onReceived;
   SocketResponseHandler(this.onReceived);
 
-  Socket? _socket;
   final _bytes = List<int>.empty(growable: true);
   final _messages = List<int>.empty(growable: true);
   static const _dividerString = '||';
@@ -19,9 +16,7 @@ final class SocketResponseHandler {
   String? _fileName;
   bool _isFile = false;
 
-  StreamSubscription<Uint8List> listenToSocket() => _socket!.listen(_mapper);
-
-  void _mapper(Uint8List bytes) {
+  void mapper(Uint8List bytes) {
     if (_handleBytes(bytes)) return;
     final commands = _compileIncommingMessage(bytes);
     if (commands == null) return;
